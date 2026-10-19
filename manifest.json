@@ -1,0 +1,16 @@
+{
+  "name": "Truco o Trato · Edificio Arcos",
+  "short_name": "Truco o Trato",
+  "description": "Apúntate al Truco o Trato del Edificio Arcos: niños y vecinos que donan caramelos.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07040c",
+  "theme_color": "#0a0510",
+  "lang": "es",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
