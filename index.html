@@ -105,8 +105,11 @@ header{text-align:center;padding:28px 0 10px}
 .cobweb{position:absolute;top:0;right:0;width:90px;opacity:.35;pointer-events:none}
 
 label{display:block;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.45);color:var(--text);font-size:16px;outline:none;transition:.2s}
-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,122,0,.2),0 0 22px rgba(255,122,0,.25)}
+input,select{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.45);color:var(--text);font-size:16px;outline:none;transition:.2s}
+select{appearance:none;-webkit-appearance:none;cursor:pointer;font-weight:700;padding-right:34px;background-image:linear-gradient(45deg,transparent 50%,var(--orange) 50%),linear-gradient(135deg,var(--orange) 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55%;background-size:6px 6px;background-repeat:no-repeat}
+select:invalid{color:var(--muted);font-weight:400}
+select option{background:#140a1c;color:var(--text)}
+input:focus,select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,122,0,.2),0 0 22px rgba(255,122,0,.25)}
 .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .counter{display:flex;align-items:center;gap:10px}
 .counter button{width:52px;height:52px;flex:none;border-radius:14px;border:1px solid var(--border);background:rgba(255,122,0,.12);color:var(--orange);font-size:26px;cursor:pointer}
@@ -207,14 +210,14 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
     <div class="card" style="max-width:640px;margin:0 auto">
       <svg class="cobweb" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width=".8"><path d="M100 0L0 100M100 0L30 100M100 0L0 70M100 0L60 100M100 0L0 40"/><path d="M85 0Q88 12 100 15M65 0Q72 26 100 35M42 0Q55 42 100 58M18 0Q36 60 100 82"/></svg>
       <h2>Quiero pedir caramelos</h2>
-      <p class="lead">Apunta al niño o niña que sale a pedir. Si van más niños contigo desde tu misma casa, indica cuántos.</p>
+      <p class="lead">Apunta al niño o niña que sale a pedir. Si van más niños contigo desde tu misma casa, indica cuántos. ¿Te equivocaste o cambia algo? Vuelve a apuntar la misma vivienda y se actualizará.</p>
       <form id="fKids" autocomplete="off">
         <label>Nombre</label>
         <input name="nombre" maxlength="40" placeholder="Ej. Lucía" required>
         <div class="row3">
-          <div><label>Escalera</label><input name="escalera" maxlength="10" placeholder="A" required></div>
-          <div><label>Piso</label><input name="piso" maxlength="10" placeholder="3º" required></div>
-          <div><label>Puerta</label><input name="puerta" maxlength="10" placeholder="B" required></div>
+          <div><label>Escalera</label><select name="escalera" required></select></div>
+          <div><label>Piso</label><select name="piso" required></select></div>
+          <div><label>Puerta</label><select name="puerta" required></select></div>
         </div>
         <label>Niños acompañantes de la misma casa</label>
         <div class="counter">
@@ -236,9 +239,9 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
       <p class="lead">¿Vas a abrir la puerta a los monstruitos? Apunta tu casa y los niños sabrán dónde llamar. No hace falta nombre.</p>
       <form id="fDon" autocomplete="off">
         <div class="row3">
-          <div><label>Escalera</label><input name="escalera" maxlength="10" placeholder="A" required></div>
-          <div><label>Piso</label><input name="piso" maxlength="10" placeholder="3º" required></div>
-          <div><label>Puerta</label><input name="puerta" maxlength="10" placeholder="B" required></div>
+          <div><label>Escalera</label><select name="escalera" required></select></div>
+          <div><label>Piso</label><select name="piso" required></select></div>
+          <div><label>Puerta</label><select name="puerta" required></select></div>
         </div>
         <button class="btn green" type="submit">🍬 Apuntar mi puerta</button>
       </form>
@@ -323,7 +326,8 @@ if(adminToken) document.body.classList.add('admin');
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cmp=(a,b)=>String(a).localeCompare(String(b),'es',{numeric:true,sensitivity:'base'});
-const byAddr=(a,b)=>cmp(a.escalera,b.escalera)||cmp(a.piso,b.piso)||cmp(a.puerta,b.puerta);
+const pisoN=p=>/^BAJO/i.test(p)?0:(parseInt(p,10)||99);
+const byAddr=(a,b)=>cmp(a.escalera,b.escalera)||(pisoN(a.piso)-pisoN(b.piso))||cmp(a.puerta,b.puerta);
 
 function toast(msg,err){const t=$('#toast');t.textContent=msg;t.className=err?'err show':'show';clearTimeout(t._h);t._h=setTimeout(()=>t.className=err?'err':'',3800)}
 
@@ -368,7 +372,7 @@ async function enviar(form,accion,okMsg){
   const b=form.querySelector('.btn'),txt=b.innerHTML;b.disabled=true;b.innerHTML='<span class="loader"></span>';
   try{
     const r=await api({accion,...formObj(form)});datos=r.data;render();
-    form.reset();toast(okMsg);celebrate(b);laugh();
+    form.reset();toast(r.actualizado?'✏️ ¡Actualizado! Hemos cambiado los datos de esa vivienda.':okMsg);celebrate(b);laugh();
   }catch(e){toast(e.message,true);scream()}
   finally{b.disabled=false;b.innerHTML=txt}
 }
@@ -376,7 +380,8 @@ $('#fKids').addEventListener('submit',e=>{e.preventDefault();enviar(e.target,'ni
 $('#fDon').addEventListener('submit',e=>{e.preventDefault();enviar(e.target,'donante','🍬 ¡Gracias! Tu puerta ya está en la lista.')});
 document.querySelectorAll('.counter button').forEach(b=>b.onclick=()=>{
   const i=b.parentNode.querySelector('input');i.value=Math.max(0,Math.min(20,(+i.value||0)+(+b.dataset.d)));tick()});
-document.querySelectorAll('input[name=escalera],input[name=piso],input[name=puerta]').forEach(i=>i.addEventListener('input',()=>i.value=i.value.toUpperCase()));
+const OPC={escalera:['A','B','C','D'],piso:['BAJO',...Array.from({length:15},(_,i)=>(i+1)+'º')],puerta:Array.from({length:26},(_,i)=>String.fromCharCode(65+i))};
+document.querySelectorAll('select[name]').forEach(sel=>{sel.innerHTML='<option value="" disabled selected>—</option>'+OPC[sel.name].map(v=>`<option value="${v}">${v}</option>`).join('');sel.addEventListener('change',tick)});
 
 /* ---------- Tabs ---------- */
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
