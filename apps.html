@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aplicaciones a medida · Pide tu presupuesto</title>
+<meta name="description" content="Creamos aplicaciones personalizadas para particulares, empresas, eventos y fallas a precios increíblemente asequibles. Pide presupuesto por WhatsApp.">
+<meta name="theme-color" content="#0a0510">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Creepster&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07040c;--card:rgba(22,12,32,.7);--line:rgba(255,255,255,.09);--text:#f4ecf7;--muted:#b3a6bd;--orange:#ff7a00;--orange2:#ffb347;--violet:#9b5cff;--green:#25d366}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow-x:hidden;line-height:1.55}
+a{color:inherit}
+
+/* Fondo animado */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:float 18s ease-in-out infinite}
+.o1{width:420px;height:420px;background:#ff7a00;top:-120px;left:-120px}
+.o2{width:380px;height:380px;background:#7b2ff7;bottom:-140px;right:-100px;animation-delay:-6s}
+.o3{width:260px;height:260px;background:#ff2d75;top:40%;left:55%;opacity:.3;animation-delay:-12s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,40px) scale(1.1)}66%{transform:translate(-40px,30px) scale(.95)}}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 30%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 20%,transparent 75%);opacity:.5}
+.spark{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 8px 2px rgba(255,180,90,.8);animation:rise linear infinite;opacity:0}
+@keyframes rise{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(-110vh);opacity:0}}
+
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 120px}
+
+/* Barra superior */
+.top{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+.back{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;backdrop-filter:blur(8px);transition:.25s}
+.back:hover{background:rgba(255,122,0,.15);border-color:rgba(255,122,0,.5);transform:translateX(-3px)}
+.back svg{width:18px;height:18px}
+.pill{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange2);border:1px solid rgba(255,179,71,.35);padding:7px 14px;border-radius:999px;background:rgba(255,122,0,.07)}
+
+/* Hero */
+.hero{text-align:center;padding:56px 0 34px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--muted);padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(37,211,102,.7);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 10px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+h1{font-size:clamp(36px,7.5vw,74px);line-height:1.04;letter-spacing:-2px;margin:22px auto 18px;max-width:900px;font-weight:900}
+.grad{background:linear-gradient(90deg,#ffb347,#ff7a00,#ff2d75,#9b5cff,#ffb347);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 8s linear infinite}
+@keyframes flow{to{background-position:300% 0}}
+.lead{font-size:clamp(16px,2.6vw,20px);color:var(--muted);max-width:680px;margin:0 auto}
+.lead b{color:var(--text)}
+
+/* Botón WhatsApp */
+.cta{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.wa{position:relative;display:inline-flex;align-items:center;gap:14px;padding:18px 30px;border-radius:20px;text-decoration:none;font-weight:800;font-size:clamp(16px,3.4vw,19px);color:#fff;
+  background:linear-gradient(135deg,#2be574,#25d366 45%,#128c4a);box-shadow:0 14px 40px rgba(37,211,102,.4),inset 0 1px 0 rgba(255,255,255,.35);overflow:hidden;transition:transform .2s,box-shadow .2s;isolation:isolate}
+.wa:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 20px 50px rgba(37,211,102,.55)}
+.wa:active{transform:scale(.98)}
+.wa svg{width:30px;height:30px;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.wa::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.5),transparent 70%);transform:translateX(-120%);animation:shine 3s infinite;z-index:-1}
+@keyframes shine{60%,100%{transform:translateX(120%)}}
+.wa .ring{position:absolute;inset:-6px;border-radius:24px;border:2px solid rgba(37,211,102,.6);animation:ring 2.2s infinite;z-index:-2}
+@keyframes ring{0%{transform:scale(.95);opacity:1}100%{transform:scale(1.15);opacity:0}}
+.wa small{display:block;font-weight:600;font-size:12px;opacity:.85;letter-spacing:.3px}
+.note{font-size:13px;color:var(--muted)}
+
+/* Secciones */
+section{margin-top:70px}
+.sh{text-align:center;margin-bottom:28px}
+.sh h2{font-size:clamp(26px,4.6vw,40px);letter-spacing:-1px;margin:0 0 8px;font-weight:900}
+.sh p{color:var(--muted);margin:0}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{position:relative;padding:24px;border-radius:22px;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(10px);overflow:hidden;transition:transform .3s,border-color .3s}
+.card::before{content:"";position:absolute;inset:0;border-radius:22px;padding:1px;background:linear-gradient(140deg,rgba(255,122,0,.7),transparent 40%,transparent 60%,rgba(155,92,255,.7));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:.3s}
+.card:hover{transform:translateY(-6px)}
+.card:hover::before{opacity:1}
+.card .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,rgba(255,122,0,.2),rgba(155,92,255,.2));border:1px solid var(--line);margin-bottom:14px}
+.card h3{margin:0 0 6px;font-size:19px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+
+.feats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.feat{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.feat .ok{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(37,211,102,.15);color:var(--green);font-weight:900}
+.feat b{display:block;margin-bottom:2px}
+.feat span{color:var(--muted);font-size:14px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
+.step{padding:24px;border-radius:22px;background:var(--card);border:1px solid var(--line);position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;top:-16px;left:22px;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:900;color:#160800;background:linear-gradient(135deg,var(--orange2),var(--orange));box-shadow:0 8px 20px rgba(255,122,0,.4)}
+.step h3{margin:10px 0 6px;font-size:18px}
+.step p{margin:0;color:var(--muted);font-size:15px}
+
+.final{margin-top:80px;text-align:center;padding:44px 22px;border-radius:28px;background:linear-gradient(135deg,rgba(255,122,0,.16),rgba(155,92,255,.16));border:1px solid rgba(255,255,255,.12);position:relative;overflow:hidden}
+.final h2{font-size:clamp(26px,5vw,42px);margin:0 0 10px;letter-spacing:-1px;font-weight:900}
+.final p{color:var(--muted);margin:0 auto;max-width:560px}
+.final .pump{position:absolute;font-size:120px;opacity:.08;right:-10px;bottom:-30px;transform:rotate(-12deg)}
+footer{text-align:center;margin-top:40px;color:var(--muted);font-size:13px}
+footer .halloween{font-family:Creepster,cursive;color:var(--orange);font-size:18px;letter-spacing:1px}
+
+/* Revelado al hacer scroll */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* Botón flotante WhatsApp */
+.fab{position:fixed;right:18px;bottom:max(18px,env(safe-area-inset-bottom));z-index:5;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:var(--green);box-shadow:0 10px 30px rgba(37,211,102,.5);transform:scale(0);transition:transform .35s cubic-bezier(.2,1.4,.4,1)}
+.fab.show{transform:scale(1)}
+.fab svg{width:32px;height:32px}
+
+@media (max-width:820px){.cards,.steps{grid-template-columns:1fr 1fr}.feats{grid-template-columns:1fr}}
+@media (max-width:560px){.cards,.steps{grid-template-columns:1fr}.hero{padding-top:34px}.steps{gap:26px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="bg">
+  <div class="grid"></div>
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+</div>
+
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="./" id="btnBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Volver</a>
+    <span class="pill">Apps a medida</span>
+  </div>
+
+  <header class="hero">
+    <span class="eyebrow rv"><span class="dot"></span>Aceptando nuevos proyectos</span>
+    <h1 class="rv">¿Te ha gustado esta app?<br><span class="grad">Creamos la tuya.</span></h1>
+    <p class="lead rv">Diseñamos y desarrollamos <b>aplicaciones personalizadas</b> para particulares, empresas, eventos, fallas y asociaciones. Hechas a tu medida y a <b>precios increíblemente asequibles</b>.</p>
+    <div class="cta rv">
+      <a class="wa" target="_blank" rel="noopener" data-wa>
+        <span class="ring"></span>
+        <svg viewBox="0 0 32 32" fill="#fff"><path d="M16.04 3C9.13 3 3.5 8.6 3.5 15.5c0 2.2.58 4.35 1.68 6.25L3.4 28.5l6.93-1.8a12.6 12.6 0 0 0 5.7 1.38h.01c6.91 0 12.54-5.6 12.54-12.5S22.95 3 16.04 3zm0 22.9h-.01a10.4 10.4 0 0 1-5.3-1.45l-.38-.22-4.11 1.07 1.1-4-.25-.4a10.33 10.33 0 0 1-1.6-5.5c0-5.74 4.68-10.4 10.45-10.4 5.76 0 10.44 4.66 10.44 10.4 0 5.74-4.68 10.5-10.34 10.5zm5.73-7.8c-.31-.16-1.86-.92-2.15-1.02-.29-.1-.5-.16-.71.15-.21.31-.81 1.02-1 1.23-.18.2-.37.23-.68.08-.31-.16-1.32-.48-2.51-1.54-.93-.82-1.56-1.84-1.74-2.15-.18-.31-.02-.48.14-.63.14-.14.31-.36.47-.55.16-.18.21-.31.31-.52.1-.2.05-.39-.03-.54-.08-.16-.71-1.7-.97-2.33-.26-.61-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.07-1.1 2.62s1.13 3.04 1.29 3.25c.16.2 2.22 3.38 5.37 4.74.75.32 1.34.52 1.8.66.75.24 1.44.2 1.98.12.6-.09 1.86-.76 2.12-1.49.26-.73.26-1.36.18-1.49-.08-.13-.29-.2-.6-.36z"/></svg>
+        <span>Pide tu presupuesto por WhatsApp<small>Gratis y sin compromiso · 633 200 100</small></span>
+      </a>
+      <span class="note">Te respondemos personalmente, sin bots ni esperas eternas.</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sh rv"><h2>Para quién trabajamos</h2><p>Si lo puedes imaginar, lo podemos convertir en una app.</p></div>
+    <div class="cards">
+      <div class="card rv"><div class="ic">🏠</div><h3>Particulares</h3><p>Organiza tu día a día, tus gastos, una colección o ese proyecto personal que tienes en mente.</p></div>
+      <div class="card rv"><div class="ic">💼</div><h3>Empresas y negocios</h3><p>Citas, pedidos, fichajes, fidelización de clientes, inventario… todo en una app con tu marca.</p></div>
+      <div class="card rv"><div class="ic">🎉</div><h3>Eventos</h3><p>Inscripciones, listas, votaciones, juegos y sorteos para bodas, cumpleaños, cenas o fiestas.</p></div>
+      <div class="card rv"><div class="ic">🔥</div><h3>Fallas</h3><p>Gestión de falleros, cuotas, loterías, actos y avisos para que toda la comisión esté al día.</p></div>
+      <div class="card rv"><div class="ic">🏢</div><h3>Comunidades de vecinos</h3><p>Como esta app de Halloween: actividades, reservas de zonas comunes, avisos e incidencias.</p></div>
+      <div class="card rv"><div class="ic">⚽</div><h3>Clubes y asociaciones</h3><p>Socios, horarios, convocatorias y pagos, sin papeles ni grupos de WhatsApp interminables.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sh rv"><h2>Lo que te llevas</h2><p>Apps de verdad, cuidadas al detalle.</p></div>
+    <div class="feats">
+      <div class="feat rv"><span class="ok">✓</span><div><b>100% personalizada</b><span>Tus colores, tus textos y las funciones que necesitas. Nada de plantillas genéricas.</span></div></div>
+      <div class="feat rv"><span class="ok">✓</span><div><b>Funciona en móvil y ordenador</b><span>Se instala en la pantalla de inicio como una app más, sin pasar por tiendas.</span></div></div>
+      <div class="feat rv"><span class="ok">✓</span><div><b>Datos en tiempo real</b><span>Todo se actualiza solo y lo puedes consultar en una hoja de cálculo.</span></div></div>
+      <div class="feat rv"><span class="ok">✓</span><div><b>Fácil de compartir</b><span>Un enlace por WhatsApp y todo el mundo dentro en segundos.</span></div></div>
+      <div class="feat rv"><span class="ok">✓</span><div><b>Diseño que impresiona</b><span>Animaciones y efectos que hacen que tu app se recuerde.</span></div></div>
+      <div class="feat rv"><span class="ok">✓</span><div><b>Precio asequible</b><span>Presupuesto cerrado y ajustado a lo que de verdad necesitas.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sh rv"><h2>Así de fácil</h2><p>De la idea a tu app en tres pasos.</p></div>
+    <div class="steps">
+      <div class="step rv"><h3>Cuéntanos tu idea</h3><p>Escríbenos por WhatsApp y explícanos qué quieres conseguir, aunque sea con dos frases.</p></div>
+      <div class="step rv"><h3>Recibe tu presupuesto</h3><p>Te proponemos la solución y un precio personalizado, sin compromiso.</p></div>
+      <div class="step rv"><h3>Estrena tu app</h3><p>La creamos, la publicamos y te la entregamos lista para compartir.</p></div>
+    </div>
+  </section>
+
+  <div class="final rv">
+    <span class="pump">🎃</span>
+    <h2>¿Hablamos de tu proyecto?</h2>
+    <p>Pide tu presupuesto personalizado ahora. Es gratis y te contestamos rápido.</p>
+    <div class="cta">
+      <a class="wa" target="_blank" rel="noopener" data-wa>
+        <span class="ring"></span>
+        <svg viewBox="0 0 32 32" fill="#fff"><path d="M16.04 3C9.13 3 3.5 8.6 3.5 15.5c0 2.2.58 4.35 1.68 6.25L3.4 28.5l6.93-1.8a12.6 12.6 0 0 0 5.7 1.38h.01c6.91 0 12.54-5.6 12.54-12.5S22.95 3 16.04 3zm5.73 15.1c-.31-.16-1.86-.92-2.15-1.02-.29-.1-.5-.16-.71.15-.21.31-.81 1.02-1 1.23-.18.2-.37.23-.68.08-.31-.16-1.32-.48-2.51-1.54-.93-.82-1.56-1.84-1.74-2.15-.18-.31-.02-.48.14-.63.14-.14.31-.36.47-.55.16-.18.21-.31.31-.52.1-.2.05-.39-.03-.54-.08-.16-.71-1.7-.97-2.33-.26-.61-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.07-1.1 2.62s1.13 3.04 1.29 3.25c.16.2 2.22 3.38 5.37 4.74.75.32 1.34.52 1.8.66.75.24 1.44.2 1.98.12.6-.09 1.86-.76 2.12-1.49.26-.73.26-1.36.18-1.49-.08-.13-.29-.2-.6-.36z"/></svg>
+        <span>Escríbenos por WhatsApp<small>633 200 100</small></span>
+      </a>
+    </div>
+  </div>
+
+  <footer><span class="halloween">Truco o Trato</span><br>Esta app de Halloween es un ejemplo de lo que podemos hacer por ti.</footer>
+</div>
+
+<a class="fab" target="_blank" rel="noopener" data-wa aria-label="WhatsApp"><svg viewBox="0 0 32 32" fill="#fff"><path d="M16.04 3C9.13 3 3.5 8.6 3.5 15.5c0 2.2.58 4.35 1.68 6.25L3.4 28.5l6.93-1.8a12.6 12.6 0 0 0 5.7 1.38h.01c6.91 0 12.54-5.6 12.54-12.5S22.95 3 16.04 3zm5.73 15.1c-.31-.16-1.86-.92-2.15-1.02-.29-.1-.5-.16-.71.15-.21.31-.81 1.02-1 1.23-.18.2-.37.23-.68.08-.31-.16-1.32-.48-2.51-1.54-.93-.82-1.56-1.84-1.74-2.15-.18-.31-.02-.48.14-.63.14-.14.31-.36.47-.55.16-.18.21-.31.31-.52.1-.2.05-.39-.03-.54-.08-.16-.71-1.7-.97-2.33-.26-.61-.52-.53-.71-.54h-.6c-.21 0-.55.08-.84.39-.29.31-1.1 1.07-1.1 2.62s1.13 3.04 1.29 3.25c.16.2 2.22 3.38 5.37 4.74.75.32 1.34.52 1.8.66.75.24 1.44.2 1.98.12.6-.09 1.86-.76 2.12-1.49.26-.73.26-1.36.18-1.49-.08-.13-.29-.2-.6-.36z"/></svg></a>
+
+<script>
+const WA='https://wa.me/34633200100?text='+encodeURIComponent('¡Hola! He visto la app de Truco o Trato y me gustaría pedir presupuesto para una aplicación personalizada.');
+document.querySelectorAll('[data-wa]').forEach(a=>a.href=WA);
+
+// Volver: si vienes de la app, retrocede; si no, abre la app
+document.getElementById('btnBack').addEventListener('click',e=>{
+  if(history.length>1 && document.referrer && new URL(document.referrer).origin===location.origin){e.preventDefault();history.back()}
+});
+
+// Revelado al hacer scroll
+const io=new IntersectionObserver(es=>es.forEach((en,i)=>{if(en.isIntersecting){setTimeout(()=>en.target.classList.add('in'),(i%4)*90);io.unobserve(en.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+// Botón flotante cuando el CTA principal sale de pantalla
+const fab=document.querySelector('.fab'),hero=document.querySelector('.hero .wa');
+new IntersectionObserver(([e])=>fab.classList.toggle('show',!e.isIntersecting)).observe(hero);
+
+// Chispas subiendo
+const bg=document.querySelector('.bg');
+for(let i=0;i<28;i++){const s=document.createElement('div');s.className='spark';s.style.left=Math.random()*100+'%';s.style.bottom='-10px';
+  s.style.animationDuration=(8+Math.random()*12)+'s';s.style.animationDelay=(-Math.random()*20)+'s';s.style.transform='scale('+(.5+Math.random())+')';bg.appendChild(s)}
+
+// Efecto de inclinación en tarjetas (solo ratón)
+if(matchMedia('(hover:hover)').matches){document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`translateY(-6px) perspective(700px) rotateX(${-y*6}deg) rotateY(${x*6}deg)`});
+  c.addEventListener('mouseleave',()=>c.style.transform='')})}
+</script>
+</body>
+</html>
