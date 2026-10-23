@@ -155,6 +155,24 @@ body.admin .del{display:inline-block}
 .sharegrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .sharegrid a,.sharegrid button{display:block;text-align:center;padding:14px;border-radius:14px;border:1px solid var(--border);background:rgba(255,122,0,.08);color:var(--text);text-decoration:none;font-weight:700;cursor:pointer}
 footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px;font-family:"Special Elite",monospace}
+.muro{margin:0 0 18px;padding:20px 22px}
+.muro .mhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.muro h2{font-size:clamp(26px,5vw,34px)}
+.muro .mcount{font-size:12px;color:var(--muted);font-family:"Special Elite",monospace}
+.mlist{list-style:none;margin:10px 0 14px;padding:0 6px 0 0;max-height:calc(5 * 46px);overflow-y:auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:var(--orange) rgba(0,0,0,.35)}
+.mlist::-webkit-scrollbar{width:8px}.mlist::-webkit-scrollbar-track{background:rgba(0,0,0,.35);border-radius:8px}
+.mlist::-webkit-scrollbar-thumb{background:linear-gradient(var(--orange),var(--blood));border-radius:8px}
+.mlist li{display:flex;align-items:center;gap:10px;min-height:46px;box-sizing:border-box;padding:7px 4px;border-bottom:1px dashed rgba(255,122,0,.18);font-size:15px;line-height:1.35}
+.mlist li:last-child{border-bottom:0}
+.mlist li .mi{flex:none;font-size:18px}
+.mlist li .mt{flex:1;min-width:0;overflow-wrap:anywhere}
+.mlist li .mw{flex:none;font-size:11px;color:var(--muted);font-family:"Special Elite",monospace;white-space:nowrap}
+.mlist li.nuevo{animation:mnew 2.4s ease}
+@keyframes mnew{0%{background:rgba(125,255,77,.25)}100%{background:transparent}}
+.mform{display:flex;gap:10px}
+.mform input{flex:1;min-width:0}
+.mform .btn{width:auto;flex:none;padding:0 20px;margin:0}
+.footer-promo{display:flex;justify-content:center}
 .promo{display:inline-flex;flex-direction:column;align-items:center;gap:4px;margin:0 auto 18px;padding:18px 26px;border-radius:20px;text-decoration:none;color:var(--text);font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,rgba(255,122,0,.14),rgba(138,43,226,.18));border:1px solid rgba(255,122,0,.4);box-shadow:0 0 30px rgba(255,122,0,.15);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
 .promo:hover{transform:translateY(-3px);box-shadow:0 0 40px rgba(255,122,0,.35)}
 .promo::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.18),transparent 65%);transform:translateX(-120%);animation:shine 4s infinite}
@@ -167,6 +185,9 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
 
 @media (min-width:900px){ .grid2.tables{grid-template-columns:1.25fr 1fr} }
 @media (max-width:760px){
+  .muro{padding:16px 14px}
+  .mlist li{font-size:14px}
+  .mform .btn{padding:0 14px}
   .grid2{grid-template-columns:1fr}
   .card{padding:20px 16px}
   .stats{gap:8px}
@@ -203,6 +224,16 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
     <div class="stat"><b id="sKids">0</b><span>Niños en total</span></div>
     <div class="stat"><b id="sGroups">0</b><span>Grupos</span></div>
     <div class="stat"><b id="sDoors">0</b><span>Puertas con 🍬</span></div>
+  </section>
+
+  <!-- MURO -->
+  <section class="card muro" id="muro">
+    <div class="mhead"><h2>🕯️ Muro de los espíritus</h2><span class="mcount" id="mCount">Anónimo · cualquiera puede escribir</span></div>
+    <ul class="mlist" id="mList"><li class="empty" style="justify-content:center">Cargando susurros… 🕸️</li></ul>
+    <form class="mform" id="fMuro" autocomplete="off">
+      <input name="texto" maxlength="280" placeholder="Deja tu mensaje anónimo…" required>
+      <button class="btn" type="submit">👻 Enviar</button>
+    </form>
   </section>
 
   <nav class="tabs">
@@ -276,8 +307,7 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
   </section>
 
   <footer>
-    <a class="promo" href="apps.html"><span class="pq">¿Te gusta esta aplicación?</span><span class="pb">Hacemos todo tipo de aplicaciones</span><span class="pl">Pincha aquí para más información →</span></a>
-    <button id="btnAdmin" title="Admin">🦇</button>
+    <div class="footer-promo"><a class="promo" href="apps.html"><span class="pq">¿Te gusta esta aplicación?</span><span class="pb">Hacemos todo tipo de aplicaciones</span><span class="pl">Pincha aquí para más información →</span></a></div>
   </footer>
 </div>
 
@@ -325,7 +355,7 @@ function api(params){
 }
 
 /* ---------- Estado ---------- */
-let datos={ninos:[],donantes:[]}, conocidos=new Set(), primera=true;
+let datos={ninos:[],donantes:[],muro:[]}, muroFirma='', muroVistos=null, conocidos=new Set(), primera=true;
 let adminToken=null; try{adminToken=sessionStorage.getItem('tt_admin')}catch(e){}
 if(adminToken) document.body.classList.add('admin');
 
@@ -364,6 +394,7 @@ function render(){
     <span class="addr">Esc. ${esc(d.escalera)}<br>${esc(d.piso)} ${esc(d.puerta)}</span></div>`).join('')
     :`<div class="empty" style="width:100%">${dons.length?'Nada coincide…':'Ninguna puerta todavía… 🕸️'}</div>`;
 
+  renderMuro();
   kids.forEach(k=>conocidos.add(k.id)); primera=false;
 }
 
@@ -371,6 +402,30 @@ async function cargar(){
   try{const r=await api({accion:'datos'});datos=r.data;render()}
   catch(e){if(primera)toast(e.message,true)}
 }
+
+/* ---------- Muro ---------- */
+function hace(ts){if(!ts)return'';const m=Math.floor((Date.now()-ts)/60000);
+  if(m<1)return'ahora';if(m<60)return'hace '+m+' min';const h=Math.floor(m/60);if(h<24)return'hace '+h+' h';
+  return new Date(ts).toLocaleDateString('es-ES',{day:'numeric',month:'short'})}
+const MICO=['👻','🎃','💀','🦇','🕷️','🧛','🧟','🕯️','🍬','🧙'];
+function renderMuro(){
+  const muro=datos.muro||[], ul=$('#mList');
+  $('#mCount').textContent=muro.length?muro.length+' mensaje'+(muro.length>1?'s':'')+' · anónimo':'Anónimo · cualquiera puede escribir';
+  const firma=muro.map(m=>m.id).join(',')+'|'+document.body.classList.contains('admin')+'|'+Math.floor(Date.now()/60000);
+  if(firma===muroFirma)return; muroFirma=firma;
+  const st=ul.scrollTop, prev=muroVistos;
+  ul.innerHTML=muro.length?muro.map(m=>{let h=0;for(const c of String(m.id))h=(h*31+c.charCodeAt(0))|0;
+    return `<li class="${prev&&!prev.has(m.id)?'nuevo':''}"><span class="mi">${MICO[Math.abs(h)%MICO.length]}</span><span class="mt">${esc(m.texto)}</span><span class="mw">${hace(m.ts)}</span><button class="del" data-tipo="muro" data-id="${esc(m.id)}">🗑</button></li>`}).join('')
+    :'<li class="empty" style="justify-content:center;width:100%">Nadie ha escrito aún… sé el primero 🕸️</li>';
+  ul.scrollTop=st; muroVistos=new Set(muro.map(m=>m.id));
+}
+$('#fMuro').addEventListener('submit',async e=>{e.preventDefault();
+  const f=e.target,b=f.querySelector('.btn'),txt=b.innerHTML,t=f.texto.value.trim();if(t.length<2)return;
+  b.disabled=true;b.innerHTML='<span class="loader"></span>';
+  try{const r=await api({accion:'comentar',texto:t});datos=r.data;render();
+    f.reset();$('#mList').scrollTop=0;toast('👻 ¡Publicado en el muro!');laugh()}
+  catch(err){toast(err.message,true)}
+  finally{b.disabled=false;b.innerHTML=txt}});
 
 /* ---------- Formularios ---------- */
 function formObj(f){return Object.fromEntries(new FormData(f).entries())}
@@ -398,7 +453,9 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
 $('#qKids').oninput=render;$('#qDon').oninput=render;
 
 /* ---------- Admin ---------- */
-$('#btnAdmin').onclick=()=>{$('#mAdmin').classList.add('on');$('#btnLogout').style.display=adminToken?'block':'none'};
+function abrirAdmin(){$('#mAdmin').classList.add('on');$('#btnLogout').style.display=adminToken?'block':'none'}
+let taps=0,tapT;$('#title').addEventListener('click',()=>{taps++;clearTimeout(tapT);tapT=setTimeout(()=>taps=0,1500);if(taps>=5){taps=0;abrirAdmin()}});
+if(location.hash==='#admin')setTimeout(abrirAdmin,300);
 $('#fAdmin').addEventListener('submit',async e=>{e.preventDefault();
   try{const r=await api({accion:'login',clave:e.target.clave.value});adminToken=r.token;
     try{sessionStorage.setItem('tt_admin',adminToken)}catch(_){}
