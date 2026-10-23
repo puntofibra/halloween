@@ -159,14 +159,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px;font-
 .muro .mhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .muro h2{font-size:clamp(26px,5vw,34px)}
 .muro .mcount{font-size:12px;color:var(--muted);font-family:"Special Elite",monospace}
-.mlist{list-style:none;margin:10px 0 14px;padding:0 6px 0 0;max-height:calc(5 * 46px);overflow-y:auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:var(--orange) rgba(0,0,0,.35)}
+.mlist{list-style:none;margin:10px 0 14px;padding:0 6px 0 0;font-size:15px;line-height:1.35;max-height:calc(7 * 1.35em + 8px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:var(--orange) rgba(0,0,0,.35)}
 .mlist::-webkit-scrollbar{width:8px}.mlist::-webkit-scrollbar-track{background:rgba(0,0,0,.35);border-radius:8px}
 .mlist::-webkit-scrollbar-thumb{background:linear-gradient(var(--orange),var(--blood));border-radius:8px}
-.mlist li{display:flex;align-items:center;gap:10px;min-height:46px;box-sizing:border-box;padding:7px 4px;border-bottom:1px dashed rgba(255,122,0,.18);font-size:15px;line-height:1.35}
+.mlist li{display:flex;align-items:flex-start;gap:10px;box-sizing:border-box;padding:4px;border-bottom:1px dashed rgba(255,122,0,.18)}
 .mlist li:last-child{border-bottom:0}
-.mlist li .mi{flex:none;font-size:18px}
+.mlist li .mi{flex:none;font-size:1em}
 .mlist li .mt{flex:1;min-width:0;overflow-wrap:anywhere}
-.mlist li .mw{flex:none;font-size:11px;color:var(--muted);font-family:"Special Elite",monospace;white-space:nowrap}
+.mlist li .mw{flex:none;font-size:11px;padding-top:2px;color:var(--muted);font-family:"Special Elite",monospace;white-space:nowrap}
 .mlist li.nuevo{animation:mnew 2.4s ease}
 @keyframes mnew{0%{background:rgba(125,255,77,.25)}100%{background:transparent}}
 .mform{display:flex;gap:10px}
@@ -186,7 +186,7 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
 @media (min-width:900px){ .grid2.tables{grid-template-columns:1.25fr 1fr} }
 @media (max-width:760px){
   .muro{padding:16px 14px}
-  .mlist li{font-size:14px}
+  .mlist{font-size:14px}
   .mform .btn{padding:0 14px}
   .grid2{grid-template-columns:1fr}
   .card{padding:20px 16px}
@@ -228,10 +228,10 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
 
   <!-- MURO -->
   <section class="card muro" id="muro">
-    <div class="mhead"><h2>🕯️ Muro de los espíritus</h2><span class="mcount" id="mCount">Anónimo · cualquiera puede escribir</span></div>
+    <div class="mhead"><h2>🕯️ Muro de los espíritus</h2><span class="mcount" id="mCount"></span></div>
     <ul class="mlist" id="mList"><li class="empty" style="justify-content:center">Cargando susurros… 🕸️</li></ul>
     <form class="mform" id="fMuro" autocomplete="off">
-      <input name="texto" maxlength="280" placeholder="Deja tu mensaje anónimo…" required>
+      <input name="texto" maxlength="280" placeholder="Escribe tu mensaje…" required>
       <button class="btn" type="submit">👻 Enviar</button>
     </form>
   </section>
@@ -410,20 +410,23 @@ function hace(ts){if(!ts)return'';const m=Math.floor((Date.now()-ts)/60000);
 const MICO=['👻','🎃','💀','🦇','🕷️','🧛','🧟','🕯️','🍬','🧙'];
 function renderMuro(){
   const muro=datos.muro||[], ul=$('#mList');
-  $('#mCount').textContent=muro.length?muro.length+' mensaje'+(muro.length>1?'s':'')+' · anónimo':'Anónimo · cualquiera puede escribir';
+  $('#mCount').textContent=muro.length?muro.length+' mensaje'+(muro.length>1?'s':''):'';
   const firma=muro.map(m=>m.id).join(',')+'|'+document.body.classList.contains('admin')+'|'+Math.floor(Date.now()/60000);
   if(firma===muroFirma)return; muroFirma=firma;
-  const st=ul.scrollTop, prev=muroVistos;
-  ul.innerHTML=muro.length?muro.map(m=>{let h=0;for(const c of String(m.id))h=(h*31+c.charCodeAt(0))|0;
+  const st=ul.scrollTop, prev=muroVistos, abajo=!prev||ul.scrollHeight-st-ul.clientHeight<30;
+  ul.innerHTML=muro.length?muro.slice().reverse().map(m=>{let h=0;for(const c of String(m.id))h=(h*31+c.charCodeAt(0))|0;
     return `<li class="${prev&&!prev.has(m.id)?'nuevo':''}"><span class="mi">${MICO[Math.abs(h)%MICO.length]}</span><span class="mt">${esc(m.texto)}</span><span class="mw">${hace(m.ts)}</span><button class="del" data-tipo="muro" data-id="${esc(m.id)}">🗑</button></li>`}).join('')
     :'<li class="empty" style="justify-content:center;width:100%">Nadie ha escrito aún… sé el primero 🕸️</li>';
-  ul.scrollTop=st; muroVistos=new Set(muro.map(m=>m.id));
+  muroVistos=new Set(muro.map(m=>m.id));
+  if(!prev)ul.scrollTop=ul.scrollHeight; // al abrir: se ven los más recientes (abajo)
+  else if(abajo)ul.scrollTo({top:ul.scrollHeight,behavior:'smooth'}); // si estaba abajo, baja a lo nuevo
+  else ul.scrollTop=st; // si está leyendo antiguos, no le movemos
 }
 $('#fMuro').addEventListener('submit',async e=>{e.preventDefault();
   const f=e.target,b=f.querySelector('.btn'),txt=b.innerHTML,t=f.texto.value.trim();if(t.length<2)return;
   b.disabled=true;b.innerHTML='<span class="loader"></span>';
   try{const r=await api({accion:'comentar',texto:t});datos=r.data;render();
-    f.reset();$('#mList').scrollTop=0;toast('👻 ¡Publicado en el muro!');laugh()}
+    f.reset();const ul=$('#mList');ul.scrollTo({top:ul.scrollHeight,behavior:'smooth'});toast('👻 ¡Publicado en el muro!');laugh()}
   catch(err){toast(err.message,true)}
   finally{b.disabled=false;b.innerHTML=txt}});
 
