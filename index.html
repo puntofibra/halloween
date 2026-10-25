@@ -179,6 +179,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px;font-
 .promo .pq{font-family:Creepster,cursive;font-size:22px;letter-spacing:1px;color:var(--orange2)}
 .promo .pb{font-weight:800;font-size:15px}
 .promo .pl{font-size:13px;color:var(--green);font-weight:700;text-shadow:0 0 10px rgba(125,255,77,.4)}
+.visitas{margin:6px auto 0;display:inline-block;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,122,0,.35);background:rgba(255,122,0,.08);color:var(--orange2);font-size:13px}
+.visitas b{color:var(--orange)}
+.visitas[hidden]{display:none}
 footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
 .loader{display:inline-block;width:18px;height:18px;border:3px solid rgba(0,0,0,.3);border-top-color:#170800;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -307,7 +310,8 @@ footer button{background:none;border:0;font-size:20px;cursor:pointer;opacity:.5}
   </section>
 
   <footer>
-    <div class="footer-promo"><a class="promo" href="apps.html"><span class="pq">¿Te gusta esta aplicación?</span><span class="pb">Hacemos todo tipo de aplicaciones</span><span class="pl">Pincha aquí para más información →</span></a></div>
+    <div class="footer-promo"><a class="promo" href="https://puntofibra.github.io/web/"><span class="pq">¿Te gusta esta aplicación?</span><span class="pb">Hacemos todo tipo de aplicaciones</span><span class="pl">Pincha aquí para más información →</span></a></div>
+    <div class="visitas" id="visHoy" hidden>👁️ Visitas de hoy: <b id="visN">0</b></div>
   </footer>
 </div>
 
@@ -566,6 +570,12 @@ function ambient(){if(amb)return;const a=ctx(),g=a.createGain();g.gain.value=.05
   o1.connect(g);o2.connect(g);w.connect(wf).connect(wg).connect(g);o1.start();o2.start();w.start();wl.start();amb={g,nodes:[o1,o2,w,wl]}}
 function stopAmbient(){if(!amb)return;amb.nodes.forEach(n=>{try{n.stop()}catch(e){}});amb.g.disconnect();amb=null}
 addEventListener('pointerdown',()=>{if(soundOn){ctx();ambient()}},{once:true});
+
+/* ---------- Contador de visitas de hoy ---------- */
+(function visitas(){
+  let id='';try{id=localStorage.getItem('tt_vid')||'';if(!id){id=Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem('tt_vid',id)}}catch(e){id='x'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+  api({accion:'visita',id}).then(r=>{if(typeof r.hoy==='number'){$('#visN').textContent=r.hoy;$('#visHoy').hidden=false}}).catch(()=>{});
+})();
 
 /* ---------- Arranque ---------- */
 if(API.startsWith('PEGA')){toast('Falta configurar la URL de la API en index.html',true)}
